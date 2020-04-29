@@ -6,19 +6,81 @@
 <script type="text/javascript" src="google_translate/element_main.js"></script>
 <script type="text/javascript" src="google_translate/main_zh-CN.js"></script>
 <script type="text/javascript" src="google_translate/jquery.min.js"></script>
-<script type="text/javascript">
-    var googleUrl = 'google_translate/';
-    function googleTranslateElementInit() {
-        new google.translate.TranslateElement({
-            pageLanguage: '',
-            includedLanguages: 'zh-CN,zh-TW,en,ms,vi,th,sq',//这里的语言可以去谷歌翻译里面审查元素
-            layout: google.translate.TranslateElement.FloatPosition.TOP_LEFT
-        }, 'google_translate_element');
-    }
-    $(function () {
-        $.getScript(googleUrl + "element.js?cb=googleTranslateElementInit");
-    });
-</script>
+    <script type="text/javascript">
+        var googleUrl = 'google_translate/';
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'zh-CN',
+                includedLanguages: 'zh-CN,zh-TW,en,ms,vi,th',
+                layout: google.translate.TranslateElement.FloatPosition.TOP_LEFT
+            }, 'google_translate_element');
+        }
+        $(function () {
+            $.getScript(googleUrl + "element.js?cb=googleTranslateElementInit");
+        });
+        console.clear();
+    </script>
+    <script>
+        $(function () {
+            var placeholders = document.querySelectorAll('input[placeholder]');
+            if (placeholders.length) {
+                // convert to array
+                placeholders = Array.prototype.slice.call(placeholders);
+                // copy placeholder text to a hidden div
+                var div = $('<div id="placeholders" style="display:none;"></div>');
+                placeholders.forEach(function(input){
+                    var text = input.placeholder;
+                    div.append('<div>' + text + '</div>');
+                });
+                $('body').append(div);
+                // save the first placeholder in a closure
+                var originalPH = placeholders[0].placeholder;
+                // check for changes and update as needed
+                setInterval(function(){
+                    if (isTranslated()) {
+                        updatePlaceholders();
+                        originalPH = placeholders[0].placeholder;
+                    }
+                }, 500);
+                // hoisted ---------------------------
+                function isTranslated() { // true if the text has been translated
+                    var currentPH = $($('#placeholders > div')[0]).text();
+                    return !(originalPH == currentPH);
+                }
+                function updatePlaceholders() {
+                    $('#placeholders > div').each(function(i, div){
+                        placeholders[i].placeholder = $(div).text();
+                    });
+                }
+            }
+            $(document).on('change','.goog-te-combo', function() {
+                setTimeout("init_goog()",500);
+            });
+            setTimeout("init_goog()",500);
+        });
+        function init_goog(){
+            if ($(document).find('.goog-te-combo option').eq(0).html()=="选择语言")
+                $(document).find('.goog-te-combo option').eq(0).html('Choose language');
+            $(document).find('.goog-te-combo option').eq(1).html('Melayu');
+            $(document).find('.goog-te-combo option').eq(2).html('ไทย');
+            $(document).find('.goog-te-combo option').eq(3).html('English');
+            $(document).find('.goog-te-combo option').eq(4).html('Tiếng việt nam');
+            $(document).find('.goog-te-combo option').eq(5).html('中文（繁體）');
+        }
+    </script>
+    <!--<style>-->
+        <!--/*这是放在引用的页面*/-->
+        <!--#google_translate_element{-->
+            <!--display: block !important;-->
+        <!--}-->
+        <!--.goog-te-gadget{-->
+            <!--/*background: #fff;*/-->
+        <!--}-->
+        <!--.goog-te-combo{-->
+            <!--float: right;-->
+            <!--background: #fff;-->
+        <!--}-->
+    <!--</style>-->
 <style>
 .goog-logo-link { display:none !important; }
 .goog-te-gadget { color: transparent !important; overflow: hidden;}
